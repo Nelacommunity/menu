@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>菜单二维码</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  body {
+    margin: 0;
+    background: #fff;
+    color: #2b211b;
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px;
+  }
+  .controls { width: 100%; max-width: 480px; display: flex; gap: 8px; margin-bottom: 24px; }
+  input { flex: 1; min-width: 0; padding: 10px; font-size: 15px; border: 1px solid #ccc; border-radius: 8px; }
+  button { padding: 10px 16px; font-size: 15px; border: 0; border-radius: 8px; background: #b3261e; color: #fff; cursor: pointer; }
+  .card { text-align: center; border: 2px solid #b3261e; border-radius: 16px; padding: 28px; }
+  .card h1 { margin: 0 0 4px; color: #b3261e; letter-spacing: 6px; }
+  .card p { margin: 0 0 18px; color: #8a7b70; }
+  #qr { display: inline-block; }
+  .url { margin-top: 14px; font-size: 12px; color: #8a7b70; word-break: break-all; max-width: 280px; }
+  @media print { .controls { display: none; } body { padding-top: 80px; } }
+</style>
+</head>
+<body>
+  <div class="controls">
+    <input id="url" placeholder="菜单网址，例如 https://example.com/">
+    <button onclick="make()">生成</button>
+    <button onclick="print()">打印</button>
+  </div>
+
+  <div class="card">
+    <h1>福满楼</h1>
+    <p>扫码查看菜单</p>
+    <div id="qr"></div>
+    <div class="url" id="shown"></div>
+  </div>
+
+<script>
+  const input = document.getElementById("url");
+  // 默认指向同目录下的 index.html
+  input.value = new URL("index.html", location.href).href;
+
+  function make() {
+    const box = document.getElementById("qr");
+    box.innerHTML = "";
+    new QRCode(box, { text: input.value.trim(), width: 240, height: 240, correctLevel: QRCode.CorrectLevel.M });
+    document.getElementById("shown").textContent = input.value.trim();
+  }
+  input.addEventListener("keydown", e => { if (e.key === "Enter") make(); });
+  make();
+</script>
+</body>
+</html>

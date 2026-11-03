@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>菜单 · 福满楼</title>
+<style>
+  :root {
+    --bg: #fbf7f1;
+    --card: #ffffff;
+    --ink: #2b211b;
+    --muted: #8a7b70;
+    --accent: #b3261e;
+    --line: #eadfd3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1513;
+      --card: #241d1a;
+      --ink: #f3ebe4;
+      --muted: #a8988c;
+      --accent: #ef6a5e;
+      --line: #3a2f2a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    line-height: 1.5;
+  }
+  header {
+    text-align: center;
+    padding: 32px 16px 20px;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 30px;
+    letter-spacing: 6px;
+    color: var(--accent);
+  }
+  header p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 16px;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav a {
+    flex: none;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 15px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--card);
+  }
+  nav a.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  main { max-width: 640px; margin: 0 auto; padding: 8px 16px 48px; }
+  section { scroll-margin-top: 64px; padding-top: 20px; }
+  section h2 {
+    font-size: 20px;
+    margin: 0 0 12px;
+    padding-left: 10px;
+    border-left: 4px solid var(--accent);
+  }
+  .item {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .item h3 { margin: 0; font-size: 17px; font-weight: 600; }
+  .item p { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+  .price { font-weight: 700; color: var(--accent); white-space: nowrap; font-size: 17px; }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: 2px;
+    background: var(--accent);
+    color: #fff;
+  }
+  .tag.spicy { background: #e0661b; }
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 0 16px 32px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>福满楼</h1>
+  <p>欢迎光临 · 请向服务员点餐</p>
+</header>
+
+<nav id="nav"></nav>
+<main id="menu"></main>
+
+<footer>
+  🌶 = 辣 &nbsp;·&nbsp; 价格均为人民币（元）<br>
+  如有食物过敏，请告知服务员
+</footer>
+
+<script>
+  // ===== 在这里修改你的菜单 =====
+  const MENU = [
+    { category: "招牌菜", items: [
+      { name: "北京烤鸭", desc: "皮脆肉嫩，配薄饼、葱丝、甜面酱", price: 128, tag: "招牌" },
+      { name: "宫保鸡丁", desc: "鸡丁、花生、干辣椒", price: 42, spicy: true },
+      { name: "红烧肉", desc: "肥而不腻，入口即化", price: 58 },
+    ]},
+    { category: "凉菜", items: [
+      { name: "拍黄瓜", desc: "蒜香清爽", price: 16 },
+      { name: "夫妻肺片", desc: "麻辣鲜香", price: 32, spicy: true },
+      { name: "皮蛋豆腐", desc: "嫩豆腐配松花蛋", price: 18 },
+    ]},
+    { category: "热菜", items: [
+      { name: "麻婆豆腐", desc: "麻、辣、烫、香", price: 28, spicy: true },
+      { name: "鱼香肉丝", desc: "酸甜微辣", price: 36, spicy: true },
+      { name: "糖醋排骨", desc: "外酥里嫩，酸甜可口", price: 48 },
+      { name: "清炒时蔬", desc: "当季新鲜蔬菜", price: 22 },
+    ]},
+    { category: "汤类", items: [
+      { name: "酸辣汤", desc: "开胃暖身", price: 20, spicy: true },
+      { name: "西红柿蛋汤", desc: "家常味道", price: 18 },
+    ]},
+    { category: "主食", items: [
+      { name: "扬州炒饭", desc: "虾仁、火腿、鸡蛋", price: 26 },
+      { name: "手工水饺（12个）", desc: "猪肉白菜馅", price: 24 },
+      { name: "米饭", desc: "", price: 3 },
+    ]},
+    { category: "饮品", items: [
+      { name: "茉莉花茶（壶）", desc: "", price: 18 },
+      { name: "酸梅汤", desc: "自制冰镇", price: 12 },
+      { name: "可乐 / 雪碧", desc: "", price: 8 },
+    ]},
+  ];
+  // ===========================
+
+  const nav = document.getElementById("nav");
+  const menu = document.getElementById("menu");
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  MENU.forEach((cat, i) => {
+    const id = "c" + i;
+    nav.insertAdjacentHTML("beforeend", `<a href="#${id}">${esc(cat.category)}</a>`);
+    menu.insertAdjacentHTML("beforeend", `
+      <section id="${id}">
+        <h2>${esc(cat.category)}</h2>
+        ${cat.items.map(it => `
+          <div class="item">
+            <div>
+              <h3>${esc(it.name)}${it.spicy ? " 🌶" : ""}${it.tag ? `<span class="tag">${esc(it.tag)}</span>` : ""}</h3>
+              ${it.desc ? `<p>${esc(it.desc)}</p>` : ""}
+            </div>
+            <div class="price">¥${it.price}</div>
+          </div>`).join("")}
+      </section>`);
+  });
+
+  // 高亮当前分类
+  const links = [...nav.querySelectorAll("a")];
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id));
+        const active = nav.querySelector(".active");
+        if (active) active.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+      }
+    });
+  }, { rootMargin: "-40% 0px -55% 0px" });
+  document.querySelectorAll("section").forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
